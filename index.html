@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Key Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0b0b0b;
+            color: white;
+            padding: 20px;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 8px;
+            border: none;
+        }
+
+        button {
+            background: linear-gradient(135deg,#7a00ff,#ff00c8);
+            color: white;
+            cursor: pointer;
+        }
+
+        .card {
+            background: #1a1a1a;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔑 Key Dashboard</h1>
+
+<input id="user" placeholder="Username">
+<input id="days" placeholder="Days (e.g. 30)">
+<button onclick="createKey()">Create Key</button>
+
+<div id="list"></div>
+
+<script>
+async function createKey() {
+    const user = document.getElementById("user").value;
+    const days = parseInt(document.getElementById("days").value);
+
+    await fetch("/create", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ user, days })
+    });
+
+    loadKeys();
+}
+
+async function loadKeys() {
+    const res = await fetch("/keys");
+    const data = await res.json();
+
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    data.forEach(k => {
+        list.innerHTML += `
+            <div class="card">
+                🔑 ${k.key}<br>
+                👤 ${k.user}<br>
+                ⏳ ${new Date(k.expires).toLocaleString()}<br>
+                🌍 ${k.ip || "Not bound"}<br>
+                <button onclick="deleteKey('${k._id}')">Delete</button>
+            </div>
+        `;
+    });
+}
+
+async function deleteKey(id) {
+    await fetch("/delete/" + id, { method: "DELETE" });
+    loadKeys();
+}
+
+loadKeys();
+</script>
+
+</body>
+</html>
