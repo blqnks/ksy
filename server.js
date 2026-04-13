@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // 🔌 CONNECT TO MONGODB (replace with Atlas if needed)
-mongoose.connect("mongodb://127.0.0.1:27017/keysystem")
+mongoose.connect("mongodb+srv://jprivate0124_db_user:hMnQZVlaofa9zi9I@cluster0.pj86epo.mongodb.net/?appName=Cluster0")
 .then(() => console.log("✅ MongoDB connected"))
 .catch(err => console.log(err));
 
